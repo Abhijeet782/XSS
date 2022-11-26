@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <body>
+  
+    <h2>XSS Form</h2>
+    <script>
+      document.cookie="username=John Doe; path=/";
+      console.log(document.cookie);
+
+      function encodeHTMLEntities(text) {
+        var textArea = document.createElement('textarea');
+        textArea.innerText = text;
+        return textArea.innerHTML;
+      }
+
+      function decodeHTMLEntities(text) {
+        var textArea = document.createElement('textarea');
+        textArea.innerHTML = text;
+        return textArea.value;
+      }
+    </script>
+
+    <form name="custom_form" onsubmit="return myFunction()">
+      <label for="payload">Enter Payload:</label><br>
+      <input type="text" id="payload" name="payload" value=""><br>
+      <label for="op_number">Enter Operation : 
+        <br> 1) Original Payload
+        <br> 2) Only First case Upper 
+        <br> 3) All Upper 
+        <br> 4) All Lower
+        <br> 5) HTML Encode Once
+      </label><br>
+      <input type="number" id="op_number" name="op_number" value="1"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    <!-- <img id="image" src="SS1.png" onerror="alert(1)"> -->
+    <noscript> Hii </noscript>
+    <!-- <img src="SS1.pg" onerror="alert(1)"> -->
+    <p id="demo">Hello Demo</p>
+
+    <script>
+      function myFunction() {
+        let data = document.forms["custom_form"]["payload"].value;
+        let op_number = document.forms["custom_form"]["op_number"].value;
+        let new_data = "";
+        let aa = data.split(/[\s,<>()]/);
+        console.log(aa);
+        // Original Payload
+        if(op_number==1){
+          new_data = data;
+        }
+        // First word Upper case 
+        else if(op_number==2){
+          new_data = data.slice(0,1).toUpperCase() + data.slice(1).toLowerCase();
+        }
+        // All upper case
+        else if(op_number==3){
+          new_data = data.toUpperCase();
+        }
+        // All Lower case
+        else if(op_number==4){
+          new_data = data.toLowerCase();
+        }
+        else if(op_number==5){
+          var enc_data = encodeHTMLEntities(data);
+          // var txt = document.createElement("textarea");
+          // txt.innerHTML = data;
+
+          new_data = enc_data;
+          // console.log(txt)
+        }
+        else{
+          alert("You didn't enter anything!!")
+        }
+        
+        console.debug(new_data)
+        document.getElementById("demo").innerHTML = new_data;
+        
+        return false;
+      }
+    </script>
+  </body>
+</html>
